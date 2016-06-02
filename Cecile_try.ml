@@ -56,7 +56,7 @@ let (condition_to_int: condition -> int) =  function
 let (action_to_int: action -> int) = function
    | Rien -> 0
    | Avancer -> 1
-   | Manger -> 2
+   | Manger(food) -> 2
    | Tourner_vers (cellule) -> 12 + (cellule_to_int cellule)
 
    
