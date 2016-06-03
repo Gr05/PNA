@@ -1,16 +1,14 @@
 package org.angryautomata.game;
 
-import org.angryautomata.game.action.Action;
-
 public class Automaton
 {
 	private final int[][] transitions;
-	private final Action[][] actions;
+	private final Position origin;
 
-	public Automaton(int[][] transitions, Action[][] actions)
+	public Automaton(int[][] transitions, Position origin)
 	{
 		this.transitions = transitions.clone();
-		this.actions = actions.clone();
+		this.origin = origin;
 	}
 
 	public int nextState(int current, int symbol)
@@ -18,13 +16,8 @@ public class Automaton
 		return transitions[current][symbol];
 	}
 
-	public Action getAction(int state, int symbol)
+	public Position getOrigin()
 	{
-		return actions[state][symbol];
-	}
-
-	public void modifyAction(int state, int symbol, Action action)
-	{
-		actions[state][symbol] = action;
+		return origin;
 	}
 }

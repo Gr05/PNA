@@ -1,49 +1,52 @@
 package org.angryautomata.game;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Game
 {
 	private final Engine engine = new Engine();
 	private final Board board = new Board();
 	private final Scheduler scheduler = new Scheduler();
-	private final List<Player> players = new ArrayList<>();
+	private final Map<Player, Position> players = new HashMap<>();
 
 	public Game()
 	{
 
 	}
 
-	public void addPlayer(Player player)
+	public void addPlayer(Player player, Position position)
 	{
-		if(!players.contains(player))
-		{
-			players.add(player);
-		}
+		players.put(player, position);
 	}
 
-	public List<Player> getPlayers()
+	public Set<Player> getPlayers()
 	{
-		return Collections.unmodifiableList(players);
+		return Collections.unmodifiableSet(players.keySet());
 	}
 
 	public Player getPlayer(int x, int y)
 	{
-		return getPlayer(new Position(x, y));
+		return getPlayer(new Position(x, y, board));
 	}
 
 	public Player getPlayer(Position position)
 	{
-		for(Player player : players)
+		for(Map.Entry<Player, Position> entry : players.entrySet())
 		{
-			if(player.getPosition().equals(position))
+			if(entry.getValue().equals(position))
 			{
-				return player;
+				return entry.getKey();
 			}
 		}
 
 		return null;
+	}
+
+	public Position removePlayer(Player player)
+	{
+		return players.remove(player);
 	}
 }

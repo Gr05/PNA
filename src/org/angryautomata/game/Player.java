@@ -1,35 +1,13 @@
 package org.angryautomata.game;
 
-import org.angryautomata.exception.PositionException;
-
 public class Player
 {
 	private final Automaton automaton;
-	private Position position;
+	private int state;
 
-	public Player(Automaton automaton, Position position)
+	public Player(Automaton automaton, int state)
 	{
-		if(position == null)
-		{
-			throw new PositionException("position must be non-null");
-		}
-
 		this.automaton = automaton;
-		this.position = position;
-	}
-
-	public Position getPosition()
-	{
-		return position;
-	}
-
-	public void setPosition(int x, int y)
-	{
-		setPosition(new Position(x, y));
-	}
-
-	public void setPosition(Position position)
-	{
-		this.position = position;
+		this.state = state;
 	}
 }

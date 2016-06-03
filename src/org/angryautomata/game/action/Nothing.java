@@ -4,6 +4,6 @@ public class Nothing extends Action
 {
 	public Nothing()
 	{
-		super(0);
+		super(0, Direction.O);
 	}
 }

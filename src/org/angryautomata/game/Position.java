@@ -5,8 +5,21 @@ public class Position
 	private final int x;
 	private final int y;
 
-	public Position(int x, int y)
+	public Position(int x, int y, Board board)
 	{
+		x %= board.getWidth();
+		y %= board.getHeight();
+
+		if(x < 0)
+		{
+			x += board.getWidth();
+		}
+
+		if(y < 0)
+		{
+			y += board.getHeight();
+		}
+
 		this.x = x;
 		this.y = y;
 	}

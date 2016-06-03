@@ -10,8 +10,9 @@ public abstract class Action
 	private static final List<Action> ACTIONS = new ArrayList<>();
 
 	private final int id;
+	private final Direction direction;
 
-	protected Action(int id)
+	protected Action(int id, Direction direction)
 	{
 		for(Action action : ACTIONS)
 		{
@@ -22,6 +23,7 @@ public abstract class Action
 		}
 
 		this.id = id;
+		this.direction = direction;
 
 		ACTIONS.add(this);
 	}
