@@ -45,7 +45,8 @@ public class XMLReader {
         //ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字  
         for(int i = 0; i< list.getLength() ; i ++){  
             Element element = (Element)list.item(i);  
-            String name=element.getAttribute("name");  
+            String autoname=element.getAttribute("name");  
+            String etat=element.getElementsByTagName("etat").item(0).getFirstChild().getNodeValue(); 
             String condition=element.getElementsByTagName("condition").item(0).getFirstChild().getNodeValue();  
             String action=element.getElementsByTagName("action").item(0).getFirstChild().getNodeValue();  
             String transition=element.getElementsByTagName("transition").item(0).getFirstChild().getNodeValue();  
