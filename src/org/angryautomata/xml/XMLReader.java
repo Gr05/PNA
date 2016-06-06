@@ -49,6 +49,9 @@ public class XMLReader
 			//ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字
 			for(int i = 0; i < list.getLength(); i++)
 			{
+				/* ici on a besoin d'autre fichier quand on cree XML.....
+				   du coup je ne peux pas le tester maintenante..........
+				int padding = (int) this.getResources().getDimension(R.dimen.input_field_padding);//////////////////*//
 				Element element = (Element) list.item(i);
 				int autono = element.getAttribute("numero");
 				String joueur = element.getElementsByTagName("nom").item(0).getFirstChild().getNodeValue();
