@@ -1,7 +1,5 @@
 package org.angryautomata.game.scenery;
 
-import org.angryautomata.game.action.Action;
-
 public class Forest extends Scenery
 {
 	private boolean degraded = false;
@@ -19,11 +17,5 @@ public class Forest extends Scenery
 	public void setDegraded(boolean degraded)
 	{
 		this.degraded = degraded;
-	}
-
-	@Override
-	public Action[] availableActions()
-	{
-		return new Action[]{Action.EAT, Action.CUT, Action.DEGRADE};
 	}
 }

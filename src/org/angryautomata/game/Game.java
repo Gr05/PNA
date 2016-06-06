@@ -51,7 +51,7 @@ public class Game implements Runnable
 
 				int state = player.nextState(o.getSymbol());
 
-				engine.execute(player, o, n, e, s, w);
+				//Action action = engine.action(player, o, n, e, s, w);
 			}
 
 			ticks++;

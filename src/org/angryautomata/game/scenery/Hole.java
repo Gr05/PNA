@@ -8,10 +8,4 @@ public class Hole extends Scenery
 	{
 		super(0);
 	}
-
-	@Override
-	public Action[] availableActions()
-	{
-		return new Action[0];
-	}
 }

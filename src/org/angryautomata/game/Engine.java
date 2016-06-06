@@ -12,13 +12,11 @@ public class Engine
 		this.game = game;
 	}
 
-	public Action action(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
+	public Action[] actions(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
 	{
 		if(o instanceof Forest)
 		{
 			Forest forest = (Forest) o;
-			Action[] actions = forest.availableActions();
-			Action rnd = actions[(int) (Math.random() * actions.length)];
 		}
 		else if(o instanceof Lake)
 		{

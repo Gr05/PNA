@@ -20,10 +20,4 @@ public class Lake extends Scenery
 	{
 		this.degraded = degraded;
 	}
-
-	@Override
-	public Action[] availableActions()
-	{
-		return new Action[]{Action.DRINK, Action.POLLUTE};
-	}
 }

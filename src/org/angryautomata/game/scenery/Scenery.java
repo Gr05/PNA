@@ -1,7 +1,5 @@
 package org.angryautomata.game.scenery;
 
-import org.angryautomata.game.action.Action;
-
 public abstract class Scenery
 {
 	private final int symbol;
@@ -16,6 +14,4 @@ public abstract class Scenery
 	{
 		return symbol;
 	}
-
-	public abstract Action[] availableActions();
 }
