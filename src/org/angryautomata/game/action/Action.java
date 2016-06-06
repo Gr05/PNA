@@ -1,31 +1,14 @@
 package org.angryautomata.game.action;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.angryautomata.exception.ActionException;
-
-public abstract class Action
+public enum Action
 {
-	private static final List<Action> ACTIONS = new ArrayList<>();
+	NOTHING(0), MOVE(1), EAT(2), DRINK(3), CUT(4), BREAK(5), DEGRADE(6);
 
 	private final int id;
-	private final Direction direction;
 
-	protected Action(int id, Direction direction)
+	Action(int id)
 	{
-		for(Action action : ACTIONS)
-		{
-			if(action.getId() == id)
-			{
-				throw new ActionException("There is already an action with that id");
-			}
-		}
-
 		this.id = id;
-		this.direction = direction;
-
-		ACTIONS.add(this);
 	}
 
 	public int getId()
@@ -33,14 +16,14 @@ public abstract class Action
 		return id;
 	}
 
-	public static int actionCount()
+	public static int count()
 	{
-		return ACTIONS.size();
+		return values().length;
 	}
 
 	public static Action byId(int id)
 	{
-		for(Action action : ACTIONS)
+		for(Action action : values())
 		{
 			if(action.getId() == id)
 			{

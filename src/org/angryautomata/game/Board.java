@@ -1,17 +1,17 @@
 package org.angryautomata.game;
 
-import org.angryautomata.game.action.Action;
+import org.angryautomata.game.scenery.Scenery;
 
 public class Board
 {
-	private final Action[][] terrain;
+	private final Scenery[][] terrain;
 	private final int height, width;
 
-	public Board()
+	public Board(int width, int height)
 	{
-		height = 256;
-		width = 256;
-		terrain = new Action[height][width];
+		terrain = new Scenery[height][width];
+		this.width = width;
+		this.height = height;
 	}
 
 	public int getHeight()
@@ -24,13 +24,31 @@ public class Board
 		return width;
 	}
 
-	public void setAction(Position position, Action action)
+	public void setScenery(Position position, Scenery scenery)
 	{
-
+		terrain[position.getY()][position.getX()] = scenery;
 	}
 
-	public Action getAction(int x, int y)
+	public Scenery getScenery(Position position)
 	{
-		return terrain[y][x];
+		return terrain[position.getY()][position.getX()];
+	}
+
+	public Position torusPos(int x, int y)
+	{
+		x %= width;
+		y %= height;
+
+		if(x < 0)
+		{
+			x += width;
+		}
+
+		if(y < 0)
+		{
+			y += height;
+		}
+
+		return new Position(x, y);
 	}
 }
