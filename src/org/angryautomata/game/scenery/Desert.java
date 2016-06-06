@@ -9,6 +9,6 @@ public class Desert extends Scenery
 
 	public Desert()
 	{
-		super(0, false);
+		super(0, 0, false);
 	}
 }

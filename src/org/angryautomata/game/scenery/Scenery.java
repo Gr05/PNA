@@ -5,12 +5,14 @@ public abstract class Scenery
 	protected static int SCENERIES = 0;
 
 	private final int symbol;
+	private final int grad;
 	private boolean trapped;
 
 	// texture, etc..
-	Scenery(int symbol, boolean trapped)
+	Scenery(int symbol, int grad, boolean trapped)
 	{
 		this.symbol = symbol;
+		this.grad = grad;
 
 		setTrapped(trapped);
 	}
@@ -18,6 +20,11 @@ public abstract class Scenery
 	public int getSymbol()
 	{
 		return trapped ? symbol + SCENERIES - 1 : symbol;
+	}
+
+	public int gradient()
+	{
+		return trapped ? -grad : grad;
 	}
 
 	public boolean isTrapped()

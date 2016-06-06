@@ -9,6 +9,6 @@ public class Lake extends Scenery
 
 	public Lake(boolean trapped)
 	{
-		super(1, trapped);
+		super(1, 1, trapped);
 	}
 }

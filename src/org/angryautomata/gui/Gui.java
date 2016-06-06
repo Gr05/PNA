@@ -10,7 +10,7 @@ public class Gui extends JFrame
 	{
 		super("Jeu");
 
-		add(screen);
+		add(new JScrollPane(screen));
 
 		setSize(256, 256);
 		setLocationRelativeTo(null);

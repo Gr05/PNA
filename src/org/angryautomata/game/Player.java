@@ -32,14 +32,9 @@ public class Player
 		return gradient;
 	}
 
-	public void incGradient()
+	public void updateGradient(int grad)
 	{
-		gradient++;
-	}
-
-	public void decGradient()
-	{
-		gradient--;
+		gradient += grad;
 	}
 
 	@Override

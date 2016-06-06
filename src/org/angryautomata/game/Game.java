@@ -95,6 +95,8 @@ public class Game implements Runnable
 
 			update.append(board);
 
+			gui.update(update.toString());
+
 			ticks++;
 
 			try

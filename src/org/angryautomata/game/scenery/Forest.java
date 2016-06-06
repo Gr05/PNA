@@ -9,6 +9,6 @@ public class Forest extends Scenery
 
 	public Forest(boolean trapped)
 	{
-		super(3, trapped);
+		super(3, 3, trapped);
 	}
 }

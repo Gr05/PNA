@@ -9,6 +9,6 @@ public class Meadow extends Scenery
 
 	public Meadow(boolean trapped)
 	{
-		super(2, trapped);
+		super(2, 2, trapped);
 	}
 }
