@@ -17,9 +17,9 @@ public class Player
 		return state;
 	}
 
-	public void nextState(int symbol)
+	public int nextState(int symbol)
 	{
-		state = automaton.nextState(state, symbol);
+		return state = automaton.nextState(state, symbol);
 	}
 
 	public int getGradient()
@@ -34,6 +34,6 @@ public class Player
 
 	public void decGradient()
 	{
-		gradient++;
+		gradient--;
 	}
 }

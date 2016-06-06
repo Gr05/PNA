@@ -12,6 +12,6 @@ public class Plains extends Scenery
 	@Override
 	public Action[] availableActions()
 	{
-		return new Action[]{Action.MOVE};
+		return new Action[0];
 	}
 }

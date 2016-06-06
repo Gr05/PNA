@@ -12,19 +12,17 @@ public class Engine
 		this.game = game;
 	}
 
-	public void execute(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
+	public Action action(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
 	{
-		player.nextState(o.getSymbol());
-
 		if(o instanceof Forest)
 		{
 			Forest forest = (Forest) o;
 			Action[] actions = forest.availableActions();
-
+			Action rnd = actions[(int) (Math.random() * actions.length)];
 		}
 		else if(o instanceof Lake)
 		{
-			
+
 		}
 		else if(o instanceof Rock)
 		{
@@ -34,7 +32,11 @@ public class Engine
 		{
 
 		}
+		else
+		{
 
+		}
 
+		return null;
 	}
 }

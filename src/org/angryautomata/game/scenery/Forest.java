@@ -24,6 +24,6 @@ public class Forest extends Scenery
 	@Override
 	public Action[] availableActions()
 	{
-		return new Action[]{Action.MOVE, Action.EAT, Action.CUT, Action.DEGRADE};
+		return new Action[]{Action.EAT, Action.CUT, Action.DEGRADE};
 	}
 }

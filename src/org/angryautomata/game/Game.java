@@ -39,6 +39,8 @@ public class Game implements Runnable
 
 			for(Map.Entry<Player, Position> entry : players.entrySet())
 			{
+				Player player = entry.getKey();
+
 				Position self = entry.getValue();
 
 				Scenery o = board.getScenery(self);
@@ -47,7 +49,9 @@ public class Game implements Runnable
 				Scenery s = board.getScenery(new Position(self.getX(), self.getY() + 1));
 				Scenery w = board.getScenery(new Position(self.getX() - 1, self.getY()));
 
-				engine.execute(entry.getKey(), o, n, e, s, w);
+				int state = player.nextState(o.getSymbol());
+
+				engine.execute(player, o, n, e, s, w);
 			}
 
 			ticks++;

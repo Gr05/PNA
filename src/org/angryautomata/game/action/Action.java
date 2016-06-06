@@ -2,7 +2,7 @@ package org.angryautomata.game.action;
 
 public enum Action
 {
-	NOTHING(0), MOVE(1), EAT(2), DRINK(3), CUT(4), BREAK(5), DEGRADE(6);
+	NOTHING(0), MOVE(1), EAT(2), DRINK(3), CUT(4), BREAK(5), DEGRADE(6), POLLUTE(7), POISON(8);
 
 	private final int id;
 

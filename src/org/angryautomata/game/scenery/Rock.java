@@ -24,6 +24,6 @@ public class Rock extends Scenery
 	@Override
 	public Action[] availableActions()
 	{
-		return new Action[]{Action.MOVE, Action.BREAK, Action.DEGRADE};
+		return new Action[]{Action.BREAK, Action.DEGRADE};
 	}
 }
