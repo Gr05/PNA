@@ -5,24 +5,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.angryautomata.game.action.Action;
+import org.angryautomata.game.scenery.Desert;
+import org.angryautomata.game.scenery.Meadow;
 import org.angryautomata.game.scenery.Scenery;
 
 public class Game implements Runnable
 {
 	private final Engine engine = new Engine(this);
-	private final Board board = new Board(16, 16);
 	private final Scheduler scheduler = new Scheduler();
+	private final Board board;
 	private final Map<Player, Position> players = new HashMap<>();
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
-	public Game(Automaton... automata)
+	public Game(Board board, Player... players)
 	{
-		if(automata != null)
+		this.board = board;
+
+		if(players != null)
 		{
-			for(Automaton automaton : automata)
+			for(Player player : players)
 			{
-				players.put(new Player(automaton, 0), new Position((int) (Math.random() * 16.0D), (int) (Math.random() * 16.0D)));
+				this.players.put(player, board.torusPos((int) (Math.random() * 16.0D), (int) (Math.random() * 16.0D)));
 			}
 		}
 	}
@@ -42,17 +47,43 @@ public class Game implements Runnable
 				Player player = entry.getKey();
 
 				Position self = entry.getValue();
+				Position[] card = {board.torusPos(self.getX(), self.getY() - 1), board.torusPos(self.getX() + 1, self.getY()), board.torusPos(self.getX(), self.getY() + 1), board.torusPos(self.getX() - 1, self.getY())};
 
-				Scenery o = board.getScenery(self);
-				Scenery n = board.getScenery(new Position(self.getX(), self.getY() - 1));
-				Scenery e = board.getScenery(new Position(self.getX() + 1, self.getY()));
-				Scenery s = board.getScenery(new Position(self.getX(), self.getY() + 1));
-				Scenery w = board.getScenery(new Position(self.getX() - 1, self.getY()));
+				Scenery o = board.sceneryAt(self);
+				Scenery n = board.sceneryAt(card[0]);
+				Scenery e = board.sceneryAt(card[1]);
+				Scenery s = board.sceneryAt(card[2]);
+				Scenery w = board.sceneryAt(card[3]);
 
-				int state = player.nextState(o.getSymbol());
+				Action action = engine.action(player, o, n, e, s, w);
 
-				//Action action = engine.action(player, o, n, e, s, w);
+				if(action == Action.MIGRATE)
+				{
+					players.put(player, card[(int) (Math.random() * card.length)]);
+				}
+				else if(action == Action.POLLUTE || action == Action.CONTAMINATE || action == Action.POISON)
+				{
+					board.sceneryAt(self).setTrapped(true);
+				}
+				else if(action == Action.DRAW)
+				{
+					board.setScenery(self, new Desert());
+				}
+				else if(action == Action.HARVEST)
+				{
+					board.setScenery(self, new Desert());
+				}
+				else if(action == Action.CUT)
+				{
+					board.setScenery(self, new Meadow(false));
+				}
+
+				player.nextState(o.getSymbol());
+
+				System.out.println(player + " - " + self);
 			}
+
+			System.out.println(board);
 
 			ticks++;
 
@@ -87,6 +118,13 @@ public class Game implements Runnable
 		return ticks;
 	}
 
+	public int action(Player player, int state, int symbol)
+	{
+		Position aPos = player.getAutomaton().getOrigin();
+
+		return board.sceneryAt(board.torusPos(aPos.getX() + state, aPos.getY() + symbol)).getSymbol();
+	}
+
 	public void addPlayer(Player player, Position position)
 	{
 		players.put(player, position);
@@ -119,6 +157,6 @@ public class Game implements Runnable
 	{
 		Position pos = players.get(player);
 
-		players.put(player, new Position(pos.getX() + relX, pos.getY() + relY));
+		players.put(player, board.torusPos(pos.getX() + relX, pos.getY() + relY));
 	}
 }

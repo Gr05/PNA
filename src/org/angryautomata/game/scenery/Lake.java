@@ -1,23 +1,14 @@
 package org.angryautomata.game.scenery;
 
-import org.angryautomata.game.action.Action;
-
 public class Lake extends Scenery
 {
-	private boolean degraded = false;
-
-	public Lake()
+	static
 	{
-		super(3);
+		SCENERIES++;
 	}
 
-	public boolean isDegraded()
+	public Lake(boolean trapped)
 	{
-		return degraded;
-	}
-
-	public void setDegraded(boolean degraded)
-	{
-		this.degraded = degraded;
+		super(1, trapped);
 	}
 }

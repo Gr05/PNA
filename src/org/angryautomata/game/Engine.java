@@ -1,7 +1,7 @@
 package org.angryautomata.game;
 
 import org.angryautomata.game.action.Action;
-import org.angryautomata.game.scenery.*;
+import org.angryautomata.game.scenery.Scenery;
 
 public class Engine
 {
@@ -12,29 +12,13 @@ public class Engine
 		this.game = game;
 	}
 
-	public Action[] actions(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
+	public Action action(Player player, Scenery o, Scenery n, Scenery e, Scenery s, Scenery w)
 	{
-		if(o instanceof Forest)
-		{
-			Forest forest = (Forest) o;
-		}
-		else if(o instanceof Lake)
-		{
+		int state = player.getState();
+		int id = game.action(player, state, o.getSymbol());
+		Action action = Action.byId(id);
 
-		}
-		else if(o instanceof Rock)
-		{
+		return action != null && o.getSymbol() == id ? action : Action.MIGRATE;
 
-		}
-		else if(o instanceof Plains)
-		{
-
-		}
-		else
-		{
-
-		}
-
-		return null;
 	}
 }

@@ -2,20 +2,13 @@ package org.angryautomata.game.scenery;
 
 public class Forest extends Scenery
 {
-	private boolean degraded = false;
-
-	public Forest()
+	static
 	{
-		super(2);
+		SCENERIES++;
 	}
 
-	public boolean isDegraded()
+	public Forest(boolean trapped)
 	{
-		return degraded;
-	}
-
-	public void setDegraded(boolean degraded)
-	{
-		this.degraded = degraded;
+		super(3, trapped);
 	}
 }

@@ -12,6 +12,11 @@ public class Player
 		this.state = state;
 	}
 
+	public Automaton getAutomaton()
+	{
+		return automaton;
+	}
+
 	public int getState()
 	{
 		return state;
@@ -35,5 +40,11 @@ public class Player
 	public void decGradient()
 	{
 		gradient--;
+	}
+
+	@Override
+	public String toString()
+	{
+		return state + ", " + gradient;
 	}
 }
