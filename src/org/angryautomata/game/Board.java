@@ -1,7 +1,5 @@
 package org.angryautomata.game;
 
-import org.angryautomata.game.action.Action;
-import org.angryautomata.game.scenery.Desert;
 import org.angryautomata.game.scenery.Scenery;
 
 public class Board
@@ -19,7 +17,7 @@ public class Board
 		{
 			for(int j = 0; j < width; j++)
 			{
-				terrain[i][j] = new Desert();
+				terrain[i][j] = Scenery.valueOf((int) (Math.random() * 4));
 			}
 		}
 	}
@@ -46,12 +44,12 @@ public class Board
 
 	public void addScenery(Position origin, int[][] actions)
 	{
-		int count = Action.count();
+		int yMax = actions.length, xMax = actions[0].length;
 		int ox = origin.getX(), oy = origin.getY();
 
-		for(int y = 0; y < count; y++)
+		for(int y = 0; y < yMax; y++)
 		{
-			for(int x = 0; x < states; x++)
+			for(int x = 0; x < xMax; x++)
 			{
 				setScenery(torusPos(x + ox, y + oy), Scenery.valueOf(actions[y][x]));
 			}
@@ -74,23 +72,5 @@ public class Board
 		}
 
 		return new Position(x, y);
-	}
-
-	@Override
-	public String toString()
-	{
-		StringBuilder result = new StringBuilder();
-
-		for(int i = 0; i < height; i++)
-		{
-			for(int j = 0; j < width; j++)
-			{
-				result.append(terrain[i][j].getSymbol()).append("\t");
-			}
-
-			result.append(System.lineSeparator());
-		}
-
-		return result.toString();
 	}
 }

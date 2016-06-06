@@ -2,7 +2,7 @@ package org.angryautomata.game.scenery;
 
 public abstract class Scenery
 {
-	protected static int SCENERIES = 0;
+	private static int SCENERIES = 4;
 
 	private final int symbol;
 	private final int grad;
@@ -17,9 +17,14 @@ public abstract class Scenery
 		setTrapped(trapped);
 	}
 
+	public int getFakeSymbol()
+	{
+		return symbol;
+	}
+
 	public int getSymbol()
 	{
-		return trapped ? symbol + SCENERIES - 1 : symbol;
+		return trapped ? getFakeSymbol() + SCENERIES - 1 : getFakeSymbol();
 	}
 
 	public int gradient()
@@ -48,32 +53,32 @@ public abstract class Scenery
 		{
 			case 1:
 			{
-				return new Lake(true);
+				return new Lake(false);
 			}
 
 			case 2:
 			{
-				return new Lake(false);
+				return new Meadow(false);
 			}
 
 			case 3:
 			{
-				return new Meadow(true);
+				return new Forest(false);
 			}
 
 			case 4:
 			{
-				return new Meadow(false);
+				return new Lake(true);
 			}
 
 			case 5:
 			{
-				return new Forest(true);
+				return new Meadow(true);
 			}
 
 			case 6:
 			{
-				return new Forest(false);
+				return new Forest(true);
 			}
 
 			default:

@@ -13,7 +13,7 @@ public class Automaton
 
 	public int nextState(int current, int symbol)
 	{
-		return transitions[current][symbol];
+		return transitions[symbol][current];
 	}
 
 	public Position getOrigin()

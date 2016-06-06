@@ -1,9 +1,6 @@
 package org.angryautomata.game;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.angryautomata.game.action.Action;
 import org.angryautomata.game.scenery.Desert;
@@ -30,7 +27,7 @@ public class Game implements Runnable
 		{
 			for(Player player : players)
 			{
-				addPlayer(player, board.torusPos((int) (Math.random() * 16.0D), (int) (Math.random() * 16.0D)));
+				addPlayer(player, board.torusPos((int) (Math.random() * board.getWidth()), (int) (Math.random() * board.getHeight())));
 			}
 		}
 	}
@@ -55,14 +52,14 @@ public class Game implements Runnable
 				Position[] card = {board.torusPos(self.getX(), self.getY() - 1), board.torusPos(self.getX() + 1, self.getY()), board.torusPos(self.getX(), self.getY() + 1), board.torusPos(self.getX() - 1, self.getY())};
 
 				Scenery o = board.sceneryAt(self);
-				Scenery n = board.sceneryAt(card[0]);
-				Scenery e = board.sceneryAt(card[1]);
-				Scenery s = board.sceneryAt(card[2]);
-				Scenery w = board.sceneryAt(card[3]);
 
-				Action action = engine.action(player, o, n, e, s, w);
+				Action action = action(player, o);
 
-				if(action == Action.MIGRATE)
+				if(action == Action.NOTHING)
+				{
+					player.updateGradient(-1);
+				}
+				else if(action == Action.MIGRATE)
 				{
 					players.put(player, card[(int) (Math.random() * card.length)]);
 					player.updateGradient(-1);
@@ -70,7 +67,7 @@ public class Game implements Runnable
 				else if(action == Action.POLLUTE || action == Action.CONTAMINATE || action == Action.POISON)
 				{
 					board.sceneryAt(self).setTrapped(true);
-					players.decGradient();
+					player.updateGradient(-1);
 				}
 				else if(action == Action.DRAW)
 				{
@@ -88,20 +85,24 @@ public class Game implements Runnable
 					board.setScenery(self, new Meadow(false));
 				}
 
-				player.nextState(o.getSymbol());
+				player.nextState(o.getFakeSymbol());
 
-				update.append(player).append(" - ").append(self).append("\n");
+				update.append(player).append(" - ").append(o.getSymbol()).append(" - ").append(self).append("\n");
+				update.append(action).append("\n");
+
+				if(player.getGradient() <= 0)
+				{
+					removePlayer(player);
+				}
 			}
 
-			update.append(board);
-
-			gui.update(update.toString());
+			gui.update(update.toString(), board, new ArrayList<>(players.values()));
 
 			ticks++;
 
 			try
 			{
-				Thread.sleep(1000L);
+				Thread.sleep(20L);
 			}
 			catch(InterruptedException e)
 			{
@@ -130,11 +131,42 @@ public class Game implements Runnable
 		return ticks;
 	}
 
-	public int action(Player player, int state, int symbol)
+	public Action action(Player player, Scenery o)
 	{
-		Position aPos = player.getAutomaton().getOrigin();
+		int state = player.getState();
+		Position origin = player.getAutomaton().getOrigin();
+		int id = board.sceneryAt(board.torusPos(origin.getX() + state, origin.getY() + o.getFakeSymbol())).getSymbol();
+		Action action = Action.byId(id);
 
-		return board.sceneryAt(board.torusPos(aPos.getX() + state, aPos.getY() + symbol)).getSymbol();
+		return action != null && matches(action, o) ? action : Action.NOTHING;
+	}
+
+	private boolean matches(Action action, Scenery scenery)
+	{
+		/*if(action.getId() <= 0)
+		{
+			return true;
+		}
+
+		if(scenery.getFakeSymbol() == 1 && (action.getId() == 1 || action.getId() == 2))
+		{
+			return true;
+		}
+
+		if(scenery.getFakeSymbol() == 2 && (action.getId() == 3 || action.getId() == 4))
+		{
+			return true;
+		}
+
+		if(scenery.getFakeSymbol() == 3 && (action.getId() == 5 || action.getId() == 6))
+		{
+			return true;
+		}
+
+		return false;*/
+
+		return action.getId() <= 0 || scenery.getFakeSymbol() == 1 && (action.getId() == 1 || action.getId() == 2) || scenery.getFakeSymbol() == 2 && (action.getId() == 3 || action.getId() == 4) || scenery.getFakeSymbol() == 3 && (action.getId() == 5 || action.getId() == 6);
+
 	}
 
 	public void addPlayer(Player player, Position position)
@@ -162,6 +194,13 @@ public class Game implements Runnable
 
 	public Position removePlayer(Player player)
 	{
-		return players.remove(player);
+		Position position = players.remove(player);
+
+		if(players.isEmpty())
+		{
+			stop();
+		}
+
+		return position;
 	}
 }
