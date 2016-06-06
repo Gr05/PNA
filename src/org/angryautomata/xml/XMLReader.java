@@ -1,31 +1,35 @@
 package org.angryautomata.xml;
 
-import java.io.File;
-//import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class XMLReader {
+//import java.util.*;
+
+public class XMLReader
+{
 
 	/*Je suis seulement en train d'essayer utliser EGIT en Eclipse......pas cool*/
-	   public static void main(String arge[]){
+	public static void main(String arge[])
+	{
 
-	   // long lasting =System.currentTimeMillis();
+		// long lasting =System.currentTimeMillis();
 
-	    try{
+		try
+		{
 
-	    File f=new File("data.xml");
+			File f = new File("data.xml");
 
-	    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-	    DocumentBuilder builder=factory.newDocumentBuilder();
+			DocumentBuilder builder = factory.newDocumentBuilder();
 
-	    Document doc = builder.parse(f);
-	    
+			Document doc = builder.parse(f);
+
 	    /*//get root element 
          Element rootElement = document.getDocumentElement(); 
 
@@ -39,23 +43,26 @@ public class XMLReader {
                //process child element 
             } 
          } * */
-	    
-	    NodeList list = doc.getElementsByTagName("disk");  
-        
-        //ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字  
-        for(int i = 0; i< list.getLength() ; i ++){  
-            Element element = (Element)list.item(i);  
-            String autoname=element.getAttribute("name");  
-            String etat=element.getElementsByTagName("etat").item(0).getFirstChild().getNodeValue(); 
-            String condition=element.getElementsByTagName("condition").item(0).getFirstChild().getNodeValue();  
-            String action=element.getElementsByTagName("action").item(0).getFirstChild().getNodeValue();  
-            String transition=element.getElementsByTagName("transition").item(0).getFirstChild().getNodeValue();  
-        }
-	    }catch(Exception e){
 
-	    e.printStackTrace();
+			NodeList list = doc.getElementsByTagName("disk");
 
-	    }
-	   }
-	
+			//ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字
+			for(int i = 0; i < list.getLength(); i++)
+			{
+				Element element = (Element) list.item(i);
+				String autoname = element.getAttribute("name");
+				String etat = element.getElementsByTagName("etat").item(0).getFirstChild().getNodeValue();
+				String condition = element.getElementsByTagName("condition").item(0).getFirstChild().getNodeValue();
+				String action = element.getElementsByTagName("action").item(0).getFirstChild().getNodeValue();
+				String transition = element.getElementsByTagName("transition").item(0).getFirstChild().getNodeValue();
+			}
+		}
+		catch(Exception e)
+		{
+
+			e.printStackTrace();
+
+		}
+	}
+
 }

@@ -3,6 +3,7 @@ package org.angryautomata;
 import java.util.Scanner;
 
 import org.angryautomata.game.*;
+import org.angryautomata.gui.Gui;
 
 public class Main
 {
@@ -15,11 +16,13 @@ public class Main
 		Automaton automaton = new Automaton(transitions, origin);
 		Player player = new Player(automaton, 0);
 
-		Board board = new Board(16, 16);
+		Board board = new Board(16 + actions[0].length, 16 + actions.length);
 
-		board.addScenery(origin, actions, transitions.length);
+		board.addScenery(origin, actions);
 
-		Game game = new Game(board, player);
+		Gui gui = new Gui();
+
+		Game game = new Game(gui, board, player);
 
 		Thread gameThread = new Thread(game);
 		gameThread.setDaemon(true);

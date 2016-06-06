@@ -44,7 +44,7 @@ public class Board
 		return terrain[position.getY()][position.getX()];
 	}
 
-	public void addScenery(Position origin, int[][] actions, int states)
+	public void addScenery(Position origin, int[][] actions)
 	{
 		int count = Action.count();
 		int ox = origin.getX(), oy = origin.getY();

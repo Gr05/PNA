@@ -39,24 +39,31 @@ public abstract class Scenery
 	{
 		switch(action)
 		{
-			case 0:
+			case 1:
 			{
-				return new Desert();
+				return new Lake(true);
 			}
 
-			case 1:
 			case 2:
 			{
 				return new Lake(false);
 			}
 
 			case 3:
+			{
+				return new Meadow(true);
+			}
+
 			case 4:
 			{
 				return new Meadow(false);
 			}
 
 			case 5:
+			{
+				return new Forest(true);
+			}
+
 			case 6:
 			{
 				return new Forest(false);
@@ -64,7 +71,7 @@ public abstract class Scenery
 
 			default:
 			{
-				return null;
+				return new Desert();
 			}
 		}
 	}

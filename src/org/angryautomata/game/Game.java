@@ -9,25 +9,28 @@ import org.angryautomata.game.action.Action;
 import org.angryautomata.game.scenery.Desert;
 import org.angryautomata.game.scenery.Meadow;
 import org.angryautomata.game.scenery.Scenery;
+import org.angryautomata.gui.Gui;
 
 public class Game implements Runnable
 {
 	private final Engine engine = new Engine(this);
 	private final Scheduler scheduler = new Scheduler();
+	private final Gui gui;
 	private final Board board;
 	private final Map<Player, Position> players = new HashMap<>();
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
-	public Game(Board board, Player... players)
+	public Game(Gui gui, Board board, Player... players)
 	{
+		this.gui = gui;
 		this.board = board;
 
 		if(players != null)
 		{
 			for(Player player : players)
 			{
-				this.players.put(player, board.torusPos((int) (Math.random() * 16.0D), (int) (Math.random() * 16.0D)));
+				addPlayer(player, board.torusPos((int) (Math.random() * 16.0D), (int) (Math.random() * 16.0D)));
 			}
 		}
 	}
@@ -41,6 +44,8 @@ public class Game implements Runnable
 			{
 				;
 			}
+
+			StringBuilder update = new StringBuilder();
 
 			for(Map.Entry<Player, Position> entry : players.entrySet())
 			{
@@ -80,10 +85,10 @@ public class Game implements Runnable
 
 				player.nextState(o.getSymbol());
 
-				System.out.println(player + " - " + self);
+				update.append(player).append(" - ").append(self).append("\n");
 			}
 
-			System.out.println(board);
+			update.append(board);
 
 			ticks++;
 
@@ -151,12 +156,5 @@ public class Game implements Runnable
 	public Position removePlayer(Player player)
 	{
 		return players.remove(player);
-	}
-
-	public void movePlayer(Player player, int relX, int relY)
-	{
-		Position pos = players.get(player);
-
-		players.put(player, board.torusPos(pos.getX() + relX, pos.getY() + relY));
 	}
 }
