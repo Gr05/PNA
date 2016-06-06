@@ -65,21 +65,26 @@ public class Game implements Runnable
 				if(action == Action.MIGRATE)
 				{
 					players.put(player, card[(int) (Math.random() * card.length)]);
+					player.updateGradient(-1);
 				}
 				else if(action == Action.POLLUTE || action == Action.CONTAMINATE || action == Action.POISON)
 				{
 					board.sceneryAt(self).setTrapped(true);
+					players.decGradient();
 				}
 				else if(action == Action.DRAW)
 				{
+					player.updateGradient(board.sceneryAt(self).gradient());
 					board.setScenery(self, new Desert());
 				}
 				else if(action == Action.HARVEST)
 				{
+					player.updateGradient(board.sceneryAt(self).gradient());
 					board.setScenery(self, new Desert());
 				}
 				else if(action == Action.CUT)
 				{
+					player.updateGradient(board.sceneryAt(self).gradient());
 					board.setScenery(self, new Meadow(false));
 				}
 
