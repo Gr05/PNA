@@ -15,6 +15,7 @@ public class Game implements Runnable
 	private final Gui gui;
 	private final Board board;
 	private final Map<Player, Position> players = new HashMap<>();
+	private final Map<Position, Update> toUpdate = new HashMap<>();
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
@@ -42,7 +43,7 @@ public class Game implements Runnable
 				;
 			}
 
-			StringBuilder update = new StringBuilder();
+			StringBuilder info = new StringBuilder();
 
 			for(Map.Entry<Player, Position> entry : players.entrySet())
 			{
@@ -69,26 +70,40 @@ public class Game implements Runnable
 					board.sceneryAt(self).setTrapped(true);
 					player.updateGradient(-1);
 				}
-				else if(action == Action.DRAW)
+				else
 				{
-					player.updateGradient(board.sceneryAt(self).gradient());
-					board.setScenery(self, new Desert());
-				}
-				else if(action == Action.HARVEST)
-				{
-					player.updateGradient(board.sceneryAt(self).gradient());
-					board.setScenery(self, new Desert());
-				}
-				else if(action == Action.CUT)
-				{
-					player.updateGradient(board.sceneryAt(self).gradient());
-					board.setScenery(self, new Meadow(false));
+					if(action == Action.DRAW)
+					{
+						player.updateGradient(o.gradient());
+						board.setScenery(self, new Desert());
+					}
+					else if(action == Action.HARVEST)
+					{
+						player.updateGradient(o.gradient());
+						board.setScenery(self, new Desert());
+					}
+					else if(action == Action.CUT)
+					{
+						player.updateGradient(o.gradient());
+						board.setScenery(self, new Meadow(false));
+					}
+
+					Update existing = toUpdate.get(self);
+
+					if(existing == null)
+					{
+						toUpdate.put(self, new Update(o.getFakeSymbol(), 10));
+					}
+					else
+					{
+						existing.setNextUpdate(new Update(o.getFakeSymbol(), 10));
+					}
 				}
 
 				player.nextState(o.getFakeSymbol());
 
-				update.append(player).append(" - ").append(o.getSymbol()).append(" - ").append(self).append("\n");
-				update.append(action).append("\n");
+				info.append("Personnage ").append(player).append(" - Symbole ").append(o.getSymbol()).append(" - Coordonnées ").append(self).append("\n");
+				info.append("Action ").append(action).append("\n");
 
 				if(player.getGradient() <= 0)
 				{
@@ -96,13 +111,29 @@ public class Game implements Runnable
 				}
 			}
 
-			gui.update(update.toString(), board, new ArrayList<>(players.values()));
+			info.append("Tour n°").append(ticks);
+
+			for(Map.Entry<Position, Update> entry : toUpdate.entrySet())
+			{
+				Update update = entry.getValue();
+
+				if(update.ticksLeft() <= 0)
+				{
+					board.setScenery(entry.getKey(), Scenery.valueOf(update.getPrevSymbol()));
+				}
+				else
+				{
+					update.countDown();
+				}
+			}
+
+			gui.update(info.toString(), board, new ArrayList<>(players.values()));
 
 			ticks++;
 
 			try
 			{
-				Thread.sleep(20L);
+				Thread.sleep(200L);
 			}
 			catch(InterruptedException e)
 			{
@@ -138,7 +169,7 @@ public class Game implements Runnable
 		int id = board.sceneryAt(board.torusPos(origin.getX() + state, origin.getY() + o.getFakeSymbol())).getSymbol();
 		Action action = Action.byId(id);
 
-		return action != null && matches(action, o) ? action : Action.NOTHING;
+		return action != null && matches(action, o) ? action : Action.MIGRATE;
 	}
 
 	private boolean matches(Action action, Scenery scenery)
