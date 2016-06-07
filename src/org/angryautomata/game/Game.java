@@ -16,7 +16,7 @@ public class Game implements Runnable
 	private final Map<Player, Position> players = new HashMap<>();
 	private final Map<Position, LinkedList<Update>> toUpdate = new HashMap<>();
 	private Gui gui = null;
-	private long tickSpeed = 100L;
+	private long tickSpeed = 20L;
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
