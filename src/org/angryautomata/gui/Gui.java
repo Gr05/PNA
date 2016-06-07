@@ -2,51 +2,105 @@ package org.angryautomata.gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.WindowEvent;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.angryautomata.game.Board;
+import org.angryautomata.game.Game;
 import org.angryautomata.game.Position;
 
 public class Gui extends JFrame
 {
-	private final JTextArea info = new JTextArea(4, 0);
-	private final CustomCellRenderer renderer;
-	private final JTable screen;
+	private final int screenHeight, screenWidth;
+	private final Game game;
+	private JPanel contentPane;
+	private JButton quitButton;
+	private JTable screen;
+	private JButton pauseAndResumeButton;
+	private JButton stopButton;
+	private CustomCellRenderer renderer;
 
-	public Gui(Board board)
+	public Gui(Game game)
 	{
 		super("Jeu");
 
-		screen = new JTable(board.getHeight(), board.getWidth());
-		renderer = new CustomCellRenderer();
-		screen.setDefaultRenderer(Object.class, renderer);
+		screenHeight = game.getHeight();
+		screenWidth = game.getWidth();
+		this.game = game;
+
+		setContentPane(contentPane);
+
+		initUIComponents();
+		addEventHandlers();
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		setLayout(new BorderLayout());
-
-		add(info, BorderLayout.NORTH);
-		add(screen, BorderLayout.CENTER);
-
+		//setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
-	public void update(String s, Board board, List<Position> positions)
+	private void initUIComponents()
+	{
+		DefaultTableModel model = (DefaultTableModel) screen.getModel();
+		model.setRowCount(screenHeight);
+		model.setColumnCount(screenWidth);
+
+		int length = 16;
+
+		for(Enumeration<TableColumn> columns = screen.getColumnModel().getColumns(); columns.hasMoreElements(); )
+		{
+			TableColumn column = columns.nextElement();
+
+			column.setMinWidth(length);
+			column.setMaxWidth(length);
+			column.setPreferredWidth(length);
+		}
+
+		screen.setRowHeight(length);
+
+		renderer = new CustomCellRenderer();
+		screen.setDefaultRenderer(Object.class, renderer);
+	}
+
+	private void addEventHandlers()
+	{
+		quitButton.addActionListener(e -> dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING)));
+		pauseAndResumeButton.addActionListener(e ->
+		{
+			if(game.isPaused())
+			{
+				pauseAndResumeButton.setText("Pause");
+
+				game.resume();
+			}
+			else
+			{
+				pauseAndResumeButton.setText("Reprendre");
+
+				game.pause();
+			}
+		});
+		stopButton.addActionListener(e ->
+		{
+			game.stop();
+		});
+	}
+
+	public void update(Board board, Map<Position, Color> positions)
 	{
 		SwingUtilities.invokeLater(() ->
 		{
-			List<Position> fpositions = new ArrayList<>(positions);
+			renderer.setHighlight(positions);
 
-			info.setText(s);
-			renderer.setHighlight(fpositions);
-
-			for(int i = 0; i < board.getHeight(); i++)
+			for(int i = 0; i < screenHeight; i++)
 			{
-				for(int j = 0; j < board.getWidth(); j++)
+				for(int j = 0; j < screenWidth; j++)
 				{
 					screen.setValueAt(board.sceneryAt(board.torusPos(j, i)).getSymbol(), i, j);
 				}
@@ -54,14 +108,62 @@ public class Gui extends JFrame
 		});
 	}
 
+	public static void setSystemLookAndFeel()
+	{
+		setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	}
+
+	private static void setLookAndFeel(String lookAndFeel)
+	{
+		JFrame frame = new JFrame();
+
+		try
+		{
+			UIManager.setLookAndFeel(lookAndFeel);
+		}
+		catch(Exception e)
+		{
+			try
+			{
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
+			catch(Exception ignored)
+			{
+			}
+		}
+
+		JPanel panel = new JPanel();
+		panel.setBorder(BorderFactory.createTitledBorder("test"));
+		frame.add(panel);
+
+		try
+		{
+			frame.pack();
+		}
+		catch(Exception e)
+		{
+			try
+			{
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
+			catch(Exception ignored)
+			{
+			}
+		}
+
+		frame.dispose();
+
+		JDialog.setDefaultLookAndFeelDecorated(false);
+	}
+
 	private static class CustomCellRenderer extends DefaultTableCellRenderer
 	{
-		private final List<Position> highlight = new ArrayList<>();
+		private final Map<Position, Color> highlight = new HashMap<>();
 
-		public void setHighlight(List<Position> highlight)
+		void setHighlight(Map<Position, Color> highlight)
 		{
 			this.highlight.clear();
-			this.highlight.addAll(highlight);
+			this.highlight.putAll(highlight);
 		}
 
 		@Override
@@ -73,11 +175,13 @@ public class Gui extends JFrame
 			{
 				Color highColor = null;
 
-				for(Position position : highlight)
+				for(Map.Entry<Position, Color> entry : highlight.entrySet())
 				{
+					Position position = entry.getKey();
+
 					if(row == position.getY() && column == position.getX())
 					{
-						highColor = Color.RED;
+						highColor = entry.getValue();
 
 						break;
 					}

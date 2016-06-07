@@ -7,30 +7,49 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		Position origin = new Position(0, 0);
-		int[][] transitions = {
+		Position origin1 = new Position(0, 0);
+		int[][] transitions1 = {
 				{1, 2, 3, 0},
 				{1, 2, 3, 0},
 				{1, 2, 3, 0},
 				{1, 2, 3, 0}
 		};
-		int[][] actions = {
+		int[][] actions1 = {
 				{0, 0, 0, 0}, // desert
-				{2, 2, 2, 2}, // lake
-				{4, 4, 4, 4}, // meadow
-				{6, 6, 6, 6}  // forest
+				{2, 2, 2, 2}, // lac
+				{4, 4, 4, 4}, // prairie
+				{6, 6, 6, 6}  // foret
 		};
 
-		Automaton automaton = new Automaton(transitions, origin);
-		Player player = new Player(automaton, 0);
+		Automaton automaton1 = new Automaton(transitions1, origin1);
+		Player player1 = new Player(automaton1, 0, 255);
 
-		Board board = new Board(16, 16);
 
-		board.addScenery(origin, actions);
+		Position origin2 = new Position(16, 16);
+		int[][] transitions2 = {
+				{2, 1, 3, 0},
+				{1, 1, 0, 2},
+				{0, 2, 3, 3},
+				{1, 0, 3, 3}
+		};
+		int[][] actions2 = {
+				{0, 0, 0, 0}, // desert
+				{2, 2, 2, 2}, // lac
+				{4, 4, 4, 4}, // prairie
+				{6, 6, 6, 6}  // foret
+		};
 
-		Gui gui = new Gui(board);
+		Automaton automaton2 = new Automaton(transitions2, origin2);
+		Player player2 = new Player(automaton2, 0, 127);
 
-		Game game = new Game(gui, board, player);
+
+		Board board = new Board(32, 32);
+		board.addScenery(origin1, actions1);
+		board.addScenery(origin2, actions2);
+
+		Game game = new Game(board, player1, player2);
+		Gui gui = new Gui(game);
+		game.setGui(gui);
 
 		Thread gameThread = new Thread(game);
 		gameThread.setDaemon(true);

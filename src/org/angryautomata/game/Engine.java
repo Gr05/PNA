@@ -8,6 +8,4 @@ public class Engine
 	{
 		this.game = game;
 	}
-
-
 }

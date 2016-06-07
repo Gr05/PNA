@@ -5,7 +5,6 @@ public class Update
 	private final int prevSymbol;
 	private final int regenTicks;
 	private int ticksLeft;
-	private Update next = null;
 
 	public Update(int prevSymbol, int regenTicks)
 	{
@@ -15,14 +14,12 @@ public class Update
 
 	public void countDown()
 	{
-		if(next == null)
-		{
-			ticksLeft--;
-		}
-		else
-		{
-			next.countDown();
-		}
+		ticksLeft--;
+	}
+
+	public boolean canUpdate()
+	{
+		return ticksLeft <= 0;
 	}
 
 	public void reset()
@@ -38,18 +35,5 @@ public class Update
 	public int getPrevSymbol()
 	{
 		return prevSymbol;
-	}
-
-	public void setNextUpdate(Update update)
-	{
-		if(next == null)
-		{
-			reset();
-			next = update;
-		}
-		else
-		{
-			next.setNextUpdate(update);
-		}
 	}
 }
