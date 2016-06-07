@@ -51,6 +51,11 @@ public abstract class Scenery
 	{
 		switch(k)
 		{
+			case 0:
+			{
+				return new Desert();
+			}
+
 			case 1:
 			{
 				return new Lake(false);

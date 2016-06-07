@@ -24,6 +24,8 @@ public class Gui extends JFrame
 	private JTable screen;
 	private JButton pauseAndResumeButton;
 	private JButton stopButton;
+	private JSeparator verticalSeparator1;
+	private JTextArea info;
 	private IntegerCellRenderer renderer;
 
 	public Gui(Game game)
@@ -34,6 +36,8 @@ public class Gui extends JFrame
 		screenHeight = game.getHeight();
 		screenWidth = game.getWidth();
 		model = new IntegerTableModel(screenHeight, screenWidth);
+
+		game.setGui(this);
 
 		setContentPane(contentPane);
 
@@ -154,6 +158,11 @@ public class Gui extends JFrame
 		frame.dispose();
 
 		JFrame.setDefaultLookAndFeelDecorated(false);
+	}
+
+	private void createUIComponents()
+	{
+		verticalSeparator1 = new JSeparator(JSeparator.VERTICAL);
 	}
 
 	private static class IntegerTableModel extends AbstractTableModel

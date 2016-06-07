@@ -16,7 +16,7 @@ public class Game implements Runnable
 	private final Map<Player, Position> players = new HashMap<>();
 	private final Map<Position, LinkedList<Update>> toUpdate = new HashMap<>();
 	private Gui gui = null;
-	private long tickSpeed = 20L;
+	private long tickSpeed = 500L;
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
@@ -60,14 +60,14 @@ public class Game implements Runnable
 
 				Scenery o = board.sceneryAt(self);
 
-				Action action = action(player, o);
-
 				if(player.canClone())
 				{
 					clones.add(player.createClone());
 				}
 				else
 				{
+					Action action = action(player, o);
+
 					if(action == Action.NOTHING)
 					{
 						player.updateGradient(-1);
@@ -116,11 +116,13 @@ public class Game implements Runnable
 					}
 				}
 
-				player.nextState(o.getFakeSymbol());
-
 				if(player.isDead())
 				{
 					dead.add(player);
+				}
+				else
+				{
+					player.nextState(o.getFakeSymbol());
 				}
 			}
 
@@ -195,7 +197,6 @@ public class Game implements Runnable
 	private boolean matches(Action action, Scenery scenery)
 	{
 		return action.getId() <= 0 || scenery.getFakeSymbol() == 1 && (action.getId() == 1 || action.getId() == 2) || scenery.getFakeSymbol() == 2 && (action.getId() == 3 || action.getId() == 4) || scenery.getFakeSymbol() == 3 && (action.getId() == 5 || action.getId() == 6);
-
 	}
 
 	private void addPlayer(Player player, Position position)

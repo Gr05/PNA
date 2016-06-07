@@ -39,6 +39,16 @@ public class Player
 		return gradient;
 	}
 
+	public int getTeam()
+	{
+		return team;
+	}
+
+	public Color getColor()
+	{
+		return color;
+	}
+
 	public void updateGradient(int grad)
 	{
 		gradient += grad;
@@ -66,16 +76,6 @@ public class Player
 		clone.updateGradient(splitGradient);
 
 		return clone;
-	}
-
-	public int getTeam()
-	{
-		return team;
-	}
-
-	public Color getColor()
-	{
-		return color;
 	}
 
 	@Override
