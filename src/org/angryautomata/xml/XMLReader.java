@@ -66,7 +66,11 @@ public class XMLReader
 					NodeList transitionList = element.getElementsByTagName("transition");  
 	                                //if (transitionList == null) continue;
 	                                for (int j = 0; j < transitionList.getLength(); j++) {  
-	                                	transition[j] = transitionList.item(j);////////////////////////////??????!!!
+	                                	String str[] = transitionList.item(j).getNodeValue().split(",");
+	                                	for(int k=0;k<str.length;k++){  
+	                                		transition[j][k]=Integer.parseInt(str[k]); 
+	                                	}
+	                                	
 	                                }  
 				}
 		}
