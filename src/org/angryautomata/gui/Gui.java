@@ -1,8 +1,8 @@
 package org.angryautomata.gui;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -16,22 +16,24 @@ import org.angryautomata.game.Position;
 
 public class Gui extends JFrame
 {
-	private final int screenHeight, screenWidth;
 	private final Game game;
+	private final int screenHeight, screenWidth;
+	private final IntegerTableModel model;
 	private JPanel contentPane;
 	private JButton quitButton;
 	private JTable screen;
 	private JButton pauseAndResumeButton;
 	private JButton stopButton;
-	private CustomCellRenderer renderer;
+	private IntegerCellRenderer renderer;
 
 	public Gui(Game game)
 	{
 		super("Jeu");
 
+		this.game = game;
 		screenHeight = game.getHeight();
 		screenWidth = game.getWidth();
-		this.game = game;
+		model = new IntegerTableModel(screenHeight, screenWidth);
 
 		setContentPane(contentPane);
 
@@ -39,7 +41,7 @@ public class Gui extends JFrame
 		addEventHandlers();
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		//setResizable(false);
+		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -47,9 +49,7 @@ public class Gui extends JFrame
 
 	private void initUIComponents()
 	{
-		DefaultTableModel model = (DefaultTableModel) screen.getModel();
-		model.setRowCount(screenHeight);
-		model.setColumnCount(screenWidth);
+		screen.setModel(model);
 
 		int length = 16;
 
@@ -63,9 +63,10 @@ public class Gui extends JFrame
 		}
 
 		screen.setRowHeight(length);
+		screen.setCellSelectionEnabled(true);
 
-		renderer = new CustomCellRenderer();
-		screen.setDefaultRenderer(Object.class, renderer);
+		renderer = new IntegerCellRenderer();
+		screen.setDefaultRenderer(int.class, renderer);
 	}
 
 	private void addEventHandlers()
@@ -76,20 +77,19 @@ public class Gui extends JFrame
 			if(game.isPaused())
 			{
 				pauseAndResumeButton.setText("Pause");
+				screen.setEnabled(false);
 
 				game.resume();
 			}
 			else
 			{
 				pauseAndResumeButton.setText("Reprendre");
+				screen.setEnabled(true);
 
 				game.pause();
 			}
 		});
-		stopButton.addActionListener(e ->
-		{
-			game.stop();
-		});
+		stopButton.addActionListener(e -> game.stop());
 	}
 
 	public void update(Board board, Map<Position, Color> positions)
@@ -153,10 +153,85 @@ public class Gui extends JFrame
 
 		frame.dispose();
 
-		JDialog.setDefaultLookAndFeelDecorated(false);
+		JFrame.setDefaultLookAndFeelDecorated(false);
 	}
 
-	private static class CustomCellRenderer extends DefaultTableCellRenderer
+	private static class IntegerTableModel extends AbstractTableModel
+	{
+		private final int rows, columns;
+		private final int[][] data;
+
+		IntegerTableModel(int screenHeight, int screenWidth)
+		{
+			rows = screenHeight;
+			columns = screenWidth;
+			data = new int[rows][columns];
+
+			for(int row = 0; row < rows; row++)
+			{
+				for(int column = 0; column < columns; column++)
+				{
+					setValueAt(-1, row, column);
+				}
+			}
+		}
+
+		@Override
+		public int getRowCount()
+		{
+			return rows;
+		}
+
+		@Override
+		public int getColumnCount()
+		{
+			return columns;
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex)
+		{
+			return int.class;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex)
+		{
+			return data[rowIndex][columnIndex];
+		}
+
+		@Override
+		public void setValueAt(Object object, int rowIndex, int columnIndex)
+		{
+			if(object instanceof Integer)
+			{
+				data[rowIndex][columnIndex] = (int) object;
+
+				fireTableCellUpdated(rowIndex, columnIndex);
+			}
+			else
+			{
+				try
+				{
+					int k = Integer.parseInt(object.toString());
+					data[rowIndex][columnIndex] = k;
+
+					fireTableCellUpdated(rowIndex, columnIndex);
+				}
+				catch(Exception ignored)
+				{
+				}
+			}
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex)
+		{
+			return true;
+		}
+	}
+
+	private static class IntegerCellRenderer extends DefaultTableCellRenderer
 	{
 		private final Map<Position, Color> highlight = new HashMap<>();
 
@@ -189,7 +264,7 @@ public class Gui extends JFrame
 
 				if(highColor == null)
 				{
-					switch((Integer) value)
+					switch((int) value)
 					{
 						case 0:
 						{

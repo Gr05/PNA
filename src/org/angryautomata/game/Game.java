@@ -30,7 +30,7 @@ public class Game implements Runnable
 		{
 			for(Player player : players)
 			{
-				addPlayer(player, board.torusPos((int) (Math.random() * board.getWidth()), (int) (Math.random() * board.getHeight())));
+				addPlayer(player, board.randomPos());
 			}
 		}
 	}
@@ -108,7 +108,7 @@ public class Game implements Runnable
 						}
 
 						LinkedList<Update> pending = toUpdate.get(self);
-						Update update = new Update(o.getFakeSymbol(), 100);
+						Update update = new Update(o.getFakeSymbol(), 50);
 						pending.addFirst(update);
 					}
 				}
@@ -121,13 +121,40 @@ public class Game implements Runnable
 				}
 			}
 
+			int height = board.getHeight(), width = board.getWidth();
+
 			for(Player player : clones)
 			{
-				addPlayer(player, board.torusPos((int) (Math.random() * board.getWidth()), (int) (Math.random() * board.getHeight())));
+				addPlayer(player, board.randomPos());
 			}
 
 			dead.forEach(this::removePlayer);
 
+			int randomTileUpdates = (int) ((height * width) * 0.2F);
+
+			for(int k = 0; k < randomTileUpdates; k++)
+			{
+				Position rnd = board.randomPos();
+				LinkedList<Update> updates = toUpdate.get(rnd);
+
+				if(updates != null && !updates.isEmpty())
+				{
+					Update update = updates.peekLast();
+
+					if(update.canUpdate())
+					{
+						board.setScenery(rnd, Scenery.valueOf(update.getPrevSymbol()));
+
+						updates.removeLast();
+					}
+					else
+					{
+						update.countDown();
+					}
+				}
+			}
+
+/*
 			for(Map.Entry<Position, LinkedList<Update>> entry : toUpdate.entrySet())
 			{
 				LinkedList<Update> updates = entry.getValue();
@@ -148,6 +175,7 @@ public class Game implements Runnable
 					}
 				}
 			}
+*/
 
 			if(gui != null)
 			{

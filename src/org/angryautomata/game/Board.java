@@ -73,4 +73,9 @@ public class Board
 
 		return new Position(x, y);
 	}
+
+	public Position randomPos()
+	{
+		return new Position((int) (Math.random() * width), (int) (Math.random() * height));
+	}
 }
