@@ -1,11 +1,11 @@
 package org.angryautomata.xml;
 
+import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //import java.util.*;
@@ -22,48 +22,57 @@ public class XMLReader
 		try
 		{
 
-			File f = new File("data.xml");
+			File f = new File("essai.xml");
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-			DocumentBuilder builder = factory.newDocumentBuilder();
+				DocumentBuilder builder = factory.newDocumentBuilder();
 
-			Document doc = builder.parse(f);
+				Document doc = builder.parse(f);
 
-	    /*//get root element 
-         Element rootElement = document.getDocumentElement(); 
+		    /*
+	        
+	         for (int i=0; i < nodes.getLength(); i++) 
+	         { 
+	            Node node = nodes.item(i); 
+	            if (node.getNodeType() == Node.ELEMENT_NODE) {   
+	               Element child = (Element) node; 
+	               //process child element 
+	            } 
+	         } * */
+	                        //NodeList sym = doc.getElementsByTagName("nb_symbole_max");/////////////////////////
+				
+				//get root element 
+		         Element rootElement = doc.getDocumentElement(); 
+		         //traverse child elements 
+		         NodeList nodes = rootElement.getChildNodes(); 
+		         Node nbauto = nodes.item(0);
+		         Node maxetat = nodes.item(1);
+		         Node maxsym = nodes.item(2);
+		         int nb_automate = Integer.valueOf(nbauto.getNodeValue());
+		         int nb_etat_max = Integer.valueOf(maxetat.getNodeValue());
+		         int nb_symbole_max = Integer.valueOf(maxsym.getNodeValue());
+				NodeList list = doc.getElementsByTagName("automate");
 
-         //traverse child elements 
-         NodeList nodes = rootElement.getChildNodes(); 
-         for (int i=0; i < nodes.getLength(); i++) 
-         { 
-            Node node = nodes.item(i); 
-            if (node.getNodeType() == Node.ELEMENT_NODE) {   
-               Element child = (Element) node; 
-               //process child element 
-            } 
-         } * */
-                        int sym = doc.getElementsByTagName("nb_symbole_max");
-			NodeList list = doc.getElementsByTagName("automate");
-
-			//ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字
-			for(int i = 0; i < list.getLength(); i++)
-			{
-				/* ici on a besoin d'autre fichier quand on cree XML.....
-				   du coup je ne peux pas le tester maintenante..........
-				int padding = (int) this.getResources().getDimension(R.dimen.input_field_padding);//////////////////*//
-				Element element = (Element) list.item(i);
-				int autono = element.getAttribute("numero");
-				String joueur = element.getElementsByTagName("nom").item(0).getFirstChild().getNodeValue();
-				int etat = element.getElementsByTagName("nb_etat").item(0).getFirstChild().getNodeValue();
-				int[etat*sym][4] transition = null;
-				//String transition = element.getElementsByTagName("transition").item(0).getFirstChild().getNodeValue();
-				NodeList transitionList = element.getElementsByTagName("transition");  
-                                //if (transitionList == null) continue;
-                                for (int j = 0; j < transitionList.getLength(); j++) {  
-                                	transition[j] = transitionList.item(j);
-                                }  
-			}
+				//ici, on attend des Attributes dans AUTOMATE.遍历该集合，显示结合中的元素及其子元素的名字
+				for(int i = 0; i < list.getLength(); i++)
+				{
+					Element element = (Element) list.item(i);
+					int autono = Integer.valueOf(element.getAttribute("numero"));
+					String joueur = element.getElementsByTagName("nom").item(0).getFirstChild().getNodeValue();
+					int etat = Integer.valueOf(element.getElementsByTagName("nb_etat").item(0).getFirstChild().getNodeValue());
+					int[][] transition = new int[etat*nb_symbole_max][4];
+					//String transition = element.getElementsByTagName("transition").item(0).getFirstChild().getNodeValue();
+					NodeList transitionList = element.getElementsByTagName("transition");  
+	                                //if (transitionList == null) continue;
+	                                for (int j = 0; j < transitionList.getLength(); j++) {  
+	                                	String str[] = transitionList.item(j).getNodeValue().split(",");
+	                                	for(int k=0;k<str.length;k++){  
+	                                		transition[j][k]=Integer.parseInt(str[k]); 
+	                                	}
+	                                	
+	                                }  
+				}
 		}
 		catch(Exception e)
 		{
