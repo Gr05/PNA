@@ -12,13 +12,11 @@ import org.angryautomata.gui.Gui;
 
 public class Game implements Runnable
 {
-	private final Engine engine = new Engine(this);
-	private final Scheduler scheduler = new Scheduler();
 	private final Board board;
 	private final Map<Player, Position> players = new HashMap<>();
 	private final Map<Position, LinkedList<Update>> toUpdate = new HashMap<>();
 	private Gui gui = null;
-	private long tickSpeed = 50L;
+	private long tickSpeed = 100L;
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
@@ -77,11 +75,13 @@ public class Game implements Runnable
 					else if(action == Action.MIGRATE)
 					{
 						entry.setValue(card[(int) (Math.random() * card.length)]);
+
 						player.updateGradient(-1);
 					}
 					else if(action == Action.POLLUTE || action == Action.CONTAMINATE || action == Action.POISON)
 					{
 						board.sceneryAt(self).setTrapped(true);
+
 						player.updateGradient(-1);
 					}
 					else
@@ -89,16 +89,19 @@ public class Game implements Runnable
 						if(action == Action.DRAW)
 						{
 							player.updateGradient(o.gradient());
+
 							board.setScenery(self, new Desert());
 						}
 						else if(action == Action.HARVEST)
 						{
 							player.updateGradient(o.gradient());
+
 							board.setScenery(self, new Desert());
 						}
 						else if(action == Action.CUT)
 						{
 							player.updateGradient(o.gradient());
+
 							board.setScenery(self, new Meadow(false));
 						}
 
@@ -154,29 +157,6 @@ public class Game implements Runnable
 				}
 			}
 
-/*
-			for(Map.Entry<Position, LinkedList<Update>> entry : toUpdate.entrySet())
-			{
-				LinkedList<Update> updates = entry.getValue();
-
-				if(!updates.isEmpty())
-				{
-					Update update = updates.peekLast();
-
-					if(update.canUpdate())
-					{
-						board.setScenery(entry.getKey(), Scenery.valueOf(update.getPrevSymbol()));
-
-						updates.removeLast();
-					}
-					else
-					{
-						update.countDown();
-					}
-				}
-			}
-*/
-
 			if(gui != null)
 			{
 				Map<Position, Color> colors = new HashMap<>();
@@ -202,52 +182,7 @@ public class Game implements Runnable
 		}
 	}
 
-	public void pause()
-	{
-		pause = true;
-	}
-
-	public void resume()
-	{
-		pause = false;
-	}
-
-	public void stop()
-	{
-		run = false;
-	}
-
-	public boolean isPaused()
-	{
-		return pause;
-	}
-
-	public boolean isStopped()
-	{
-		return !run;
-	}
-
-	public int ticks()
-	{
-		return ticks;
-	}
-
-	public int getWidth()
-	{
-		return board.getWidth();
-	}
-
-	public int getHeight()
-	{
-		return board.getHeight();
-	}
-
-	public void setGui(Gui gui)
-	{
-		this.gui = gui;
-	}
-
-	public Action action(Player player, Scenery o)
+	private Action action(Player player, Scenery o)
 	{
 		int state = player.getState();
 		Position origin = player.getAutomaton().getOrigin();
@@ -301,5 +236,50 @@ public class Game implements Runnable
 	private boolean hasPlayerOn(Position position)
 	{
 		return players.values().contains(position);
+	}
+
+	public void pause()
+	{
+		pause = true;
+	}
+
+	public void resume()
+	{
+		pause = false;
+	}
+
+	public void stop()
+	{
+		run = false;
+	}
+
+	public boolean isPaused()
+	{
+		return pause;
+	}
+
+	public boolean isStopped()
+	{
+		return !run;
+	}
+
+	public int ticks()
+	{
+		return ticks;
+	}
+
+	public int getWidth()
+	{
+		return board.getWidth();
+	}
+
+	public int getHeight()
+	{
+		return board.getHeight();
+	}
+
+	public void setGui(Gui gui)
+	{
+		this.gui = gui;
 	}
 }
