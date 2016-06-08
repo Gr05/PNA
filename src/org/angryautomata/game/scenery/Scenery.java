@@ -47,9 +47,9 @@ public abstract class Scenery
 		return SCENERIES;
 	}
 
-	public static Scenery valueOf(int k)
+	public static Scenery byId(int id)
 	{
-		switch(k)
+		switch(id)
 		{
 			case 0:
 			{

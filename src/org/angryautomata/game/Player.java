@@ -17,6 +17,8 @@ public class Player
 		this.state = state;
 		this.team = team;
 		color = new Color(red, 0, 0);
+
+		automaton.addPlayer(this);
 	}
 
 	public Automaton getAutomaton()
@@ -76,6 +78,11 @@ public class Player
 		clone.updateGradient(splitGradient);
 
 		return clone;
+	}
+
+	public void die()
+	{
+		automaton.removePlayer(this);
 	}
 
 	@Override

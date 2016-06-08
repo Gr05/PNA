@@ -13,23 +13,39 @@ import org.angryautomata.gui.Gui;
 public class Game implements Runnable
 {
 	private final Board board;
+	private final Automaton[] automata;
 	private final Map<Player, Position> players = new HashMap<>();
 	private final Map<Position, LinkedList<Update>> toUpdate = new HashMap<>();
 	private Gui gui = null;
-	private long tickSpeed = 500L;
+	private long tickSpeed = 200L;
 	private boolean pause = false, run = true;
 	private int ticks = 0;
 
-	public Game(Board board, Player... players)
+	public Game(Board board, Automaton... automata)
 	{
 		this.board = board;
+		this.automata = automata;
 
-		if(players != null)
+		if(automata == null || automata.length < 1)
 		{
-			for(Player player : players)
+			throw new RuntimeException("automata cannot be null and must contain at least one automaton");
+		}
+
+		for(Automaton automaton : automata)
+		{
+			int actions = Scenery.sceneries(), states = automaton.numberOfStates();
+			Position origin = automaton.getOrigin();
+			int ox = origin.getX(), oy = origin.getY();
+
+			for(int y = 0; y < actions; y++)
 			{
-				addPlayer(player, board.randomPos());
+				for(int x = 0; x < states; x++)
+				{
+					board.setSceneryAt(board.torusPos(x + ox, y + oy), Scenery.byId(automaton.initialAction(x, y)));
+				}
 			}
+
+			addPlayer(new Player(automaton, 0, 0, 255), board.randomPos());
 		}
 	}
 
@@ -58,7 +74,7 @@ public class Game implements Runnable
 				Position self = entry.getValue();
 				Position[] card = {board.torusPos(self.getX(), self.getY() - 1), board.torusPos(self.getX() + 1, self.getY()), board.torusPos(self.getX(), self.getY() + 1), board.torusPos(self.getX() - 1, self.getY())};
 
-				Scenery o = board.sceneryAt(self);
+				Scenery o = board.getSceneryAt(self);
 
 				if(player.canClone())
 				{
@@ -80,7 +96,7 @@ public class Game implements Runnable
 					}
 					else if(action == Action.POLLUTE || action == Action.CONTAMINATE || action == Action.POISON)
 					{
-						board.sceneryAt(self).setTrapped(true);
+						board.getSceneryAt(self).setTrapped(true);
 
 						player.updateGradient(-1);
 					}
@@ -90,19 +106,19 @@ public class Game implements Runnable
 						{
 							player.updateGradient(o.gradient());
 
-							board.setScenery(self, new Desert());
+							board.setSceneryAt(self, new Desert());
 						}
 						else if(action == Action.HARVEST)
 						{
 							player.updateGradient(o.gradient());
 
-							board.setScenery(self, new Desert());
+							board.setSceneryAt(self, new Desert());
 						}
 						else if(action == Action.CUT)
 						{
 							player.updateGradient(o.gradient());
 
-							board.setScenery(self, new Meadow(false));
+							board.setSceneryAt(self, new Meadow(false));
 						}
 
 						if(!toUpdate.containsKey(self))
@@ -148,7 +164,7 @@ public class Game implements Runnable
 
 					if(update.canUpdate())
 					{
-						board.setScenery(rnd, Scenery.valueOf(update.getPrevSymbol()));
+						board.setSceneryAt(rnd, Scenery.byId(update.getPrevSymbol()));
 
 						updates.removeLast();
 					}
@@ -168,7 +184,7 @@ public class Game implements Runnable
 					colors.put(entry.getValue(), entry.getKey().getColor());
 				}
 
-				gui.update(board, colors);
+				gui.update(board, colors, automata);
 			}
 
 			ticks++;
@@ -188,7 +204,7 @@ public class Game implements Runnable
 	{
 		int state = player.getState();
 		Position origin = player.getAutomaton().getOrigin();
-		int id = board.sceneryAt(board.torusPos(origin.getX() + state, origin.getY() + o.getFakeSymbol())).getSymbol();
+		int id = board.getSceneryAt(board.torusPos(origin.getX() + state, origin.getY() + o.getFakeSymbol())).getSymbol();
 		Action action = Action.byId(id);
 
 		return action != null && matches(action, o) ? action : Action.MIGRATE;
@@ -222,8 +238,15 @@ public class Game implements Runnable
 		return null;
 	}
 
+	public Position getPosition(Player player)
+	{
+		return players.get(player);
+	}
+
 	private Position removePlayer(Player player)
 	{
+		player.die();
+
 		Position position = players.remove(player);
 
 		if(players.isEmpty())

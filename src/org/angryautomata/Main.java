@@ -1,58 +1,37 @@
 package org.angryautomata;
 
-import org.angryautomata.game.*;
+import org.angryautomata.game.Automaton;
+import org.angryautomata.game.Board;
+import org.angryautomata.game.Game;
+import org.angryautomata.game.Position;
 import org.angryautomata.gui.Gui;
 
 public class Main
 {
 	public static void main(String[] args)
 	{
-		Position origin1 = new Position(0, 0);
-		int[][] transitions1 = {
-				{0},
-				{0},
-				{0},
-				{0}
-		};
-		int[][] actions1 = {
-				{0}, // desert
-				{2}, // lac
-				{4}, // prairie
-				{6}  // foret
-		};
+		Position origin = new Position(0, 0);
+		int[][] transitions = new int[32][32];
+		int[][] actions = new int[32][32];
 
-		Automaton automaton1 = new Automaton(transitions1, origin1);
-		Player player1 = new Player(automaton1, 0, 0, 255);
+		for(int i = 0; i < 32; i++)
+		{
+			for(int j = 0; j < 32; j++)
+			{
+				transitions[i][j] = (int) (Math.random() * 32);
+				actions[i][j] = (int) (Math.random() * 7);
+			}
+		}
 
-
-		/*Position origin2 = new Position(16, 16);
-		int[][] transitions2 = {
-				{2, 1, 3, 0, 2, 2, 1, 0, 1, 3, 3, 1},
-				{1, 1, 0, 2, 1, 1, 1, 0, 2, 3, 3, 3},
-				{0, 2, 3, 3, 3, 3, 1, 0, 2, 0, 0, 3},
-				{1, 0, 3, 3, 0, 0, 0, 0, 2, 0, 2, 0}
-		};
-		int[][] actions2 = {
-				{0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 0}, // desert
-				{2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}, // lac
-				{4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}, // prairie
-				{6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6}  // foret
-		};
-
-		Automaton automaton2 = new Automaton(transitions2, origin2);
-		Player player2 = new Player(automaton2, 0, 1, 127);*/
-
+		Automaton automaton = new Automaton(transitions, actions, origin, "MonAutomateDébile");
 
 		Board board = new Board(32, 32);
-		board.addScenery(origin1, actions1);
-		//board.addScenery(origin2, actions2);
 
-		Game game = new Game(board, player1/*, player2*/);
+		Game game = new Game(board, automaton);
 
 		Gui.setSystemLookAndFeel();
 
 		Gui gui = new Gui(game);
-
 
 		Thread gameThread = new Thread(game);
 		gameThread.setDaemon(true);

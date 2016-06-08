@@ -1,6 +1,8 @@
 package org.angryautomata.gui;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -10,9 +12,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.angryautomata.game.Board;
-import org.angryautomata.game.Game;
-import org.angryautomata.game.Position;
+import org.angryautomata.game.*;
 
 public class Gui extends JFrame
 {
@@ -27,6 +27,9 @@ public class Gui extends JFrame
 	private JSeparator verticalSeparator1;
 	private JTextArea info;
 	private IntegerCellRenderer renderer;
+	private JPopupMenu screenMenu = new JPopupMenu();
+	private JMenuItem changeAction = new JMenuItem("Changer l'action");
+	private JCheckBoxMenuItem showAutomata = new JCheckBoxMenuItem("Voir les automates");
 
 	public Gui(Game game)
 	{
@@ -53,7 +56,11 @@ public class Gui extends JFrame
 
 	private void initUIComponents()
 	{
+		info.setAutoscrolls(false);
+
 		screen.setModel(model);
+		screen.setCellSelectionEnabled(true);
+		screen.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		int length = 16;
 
@@ -67,10 +74,13 @@ public class Gui extends JFrame
 		}
 
 		screen.setRowHeight(length);
-		screen.setCellSelectionEnabled(true);
 
 		renderer = new IntegerCellRenderer();
 		screen.setDefaultRenderer(int.class, renderer);
+
+		screenMenu.add(changeAction);
+		screenMenu.add(showAutomata);
+		screen.setComponentPopupMenu(screenMenu);
 	}
 
 	private void addEventHandlers()
@@ -82,6 +92,9 @@ public class Gui extends JFrame
 			{
 				pauseAndResumeButton.setText("Pause");
 				screen.setEnabled(false);
+				screen.clearSelection();
+				screenMenu.setEnabled(false);
+				showAutomata.setSelected(false);
 
 				game.resume();
 			}
@@ -89,24 +102,84 @@ public class Gui extends JFrame
 			{
 				pauseAndResumeButton.setText("Reprendre");
 				screen.setEnabled(true);
+				screenMenu.setEnabled(true);
 
 				game.pause();
 			}
 		});
 		stopButton.addActionListener(e -> game.stop());
+		screenMenu.addPopupMenuListener(new PopupMenuListener()
+		{
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e)
+			{
+				int[] selection = screen.getSelectedRows();
+				boolean canInteract = screen.isEnabled();
+				boolean hasSelection = selection != null && selection.length > 0;
+
+				changeAction.setEnabled(canInteract && hasSelection);
+				showAutomata.setEnabled(canInteract);
+			}
+
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e)
+			{
+			}
+
+			public void popupMenuCanceled(PopupMenuEvent e)
+			{
+			}
+		});
 	}
 
-	public void update(Board board, Map<Position, Color> positions)
+	public void update(Board board, Map<Position, Color> highlights, Automaton[] automata)
 	{
 		SwingUtilities.invokeLater(() ->
 		{
-			renderer.setHighlight(positions);
+			StringBuilder builder = new StringBuilder("Nombre de tours : ").append(game.ticks()).append("\n\n");
+
+			for(Automaton automaton : automata)
+			{
+				builder.append("Automate '").append(automaton.getName()).append("' :\n");
+
+				int numOfPlayers = automaton.getPlayers().size();
+
+				builder.append("Personnages : ").append(numOfPlayers).append("\n");
+
+				if(numOfPlayers > 0)
+				{
+					StringBuilder temp = new StringBuilder();
+					int totalGradient = 0;
+					int count = 1;
+
+					for(Player player : automaton.getPlayers())
+					{
+						temp.append("- Personnage n°").append(count).append(" :\n");
+						temp.append("    Etat : ").append(player.getState()).append("\n");
+						temp.append("    Symbole lu : ").append(board.getSceneryAt(game.getPosition(player)).getSymbol()).append("\n");
+						temp.append("    Gradient : ").append(player.getGradient()).append("\n");
+
+						totalGradient += player.getGradient();
+						count++;
+					}
+
+					builder.append("Gradient total : ").append(totalGradient).append("\n");
+					builder.append("Gradient moyen : ").append(totalGradient / automaton.getPlayers().size()).append("\n");
+					builder.append(temp).append("\n");
+				}
+				else
+				{
+					builder.append("\n");
+				}
+			}
+
+			info.setText(builder.toString());
+
+			renderer.setHighlight(highlights);
 
 			for(int i = 0; i < screenHeight; i++)
 			{
 				for(int j = 0; j < screenWidth; j++)
 				{
-					screen.setValueAt(board.sceneryAt(board.torusPos(j, i)).getSymbol(), i, j);
+					screen.setValueAt(board.getSceneryAt(board.torusPos(j, i)).getSymbol(), i, j);
 				}
 			}
 		});
@@ -236,7 +309,7 @@ public class Gui extends JFrame
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex)
 		{
-			return true;
+			return false;
 		}
 	}
 
