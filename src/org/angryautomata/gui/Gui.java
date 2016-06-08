@@ -162,7 +162,7 @@ public class Gui extends JFrame
 					}
 
 					builder.append("Gradient total : ").append(totalGradient).append("\n");
-					builder.append("Gradient moyen : ").append(totalGradient / automaton.getPlayers().size()).append("\n");
+					builder.append("Gradient moyen : ").append(totalGradient / numOfPlayers).append("\n");
 					builder.append(temp).append("\n");
 				}
 				else
@@ -358,7 +358,7 @@ public class Gui extends JFrame
 						case 1:
 						case 4:
 						{
-							highColor = Color.BLUE.brighter();
+							highColor = Color.CYAN.darker();
 
 							break;
 						}
@@ -374,7 +374,7 @@ public class Gui extends JFrame
 						case 3:
 						case 6:
 						{
-							highColor = Color.GREEN.darker();
+							highColor = Color.GREEN.darker().darker();
 
 							break;
 						}

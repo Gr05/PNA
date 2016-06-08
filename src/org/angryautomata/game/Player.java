@@ -7,16 +7,14 @@ public class Player
 	private final Automaton automaton;
 	private final int initGradient = 50;
 	private final int team;
-	private final Color color;
 	private int state;
 	private int gradient = initGradient;
 
-	public Player(Automaton automaton, int state, int team, int red)
+	public Player(Automaton automaton, int state, int team)
 	{
 		this.automaton = automaton;
 		this.state = state;
 		this.team = team;
-		color = new Color(red, 0, 0);
 
 		automaton.addPlayer(this);
 	}
@@ -48,7 +46,7 @@ public class Player
 
 	public Color getColor()
 	{
-		return color;
+		return automaton.getColor();
 	}
 
 	public void updateGradient(int grad)
@@ -68,7 +66,7 @@ public class Player
 
 	public Player createClone()
 	{
-		Player clone = new Player(automaton, 0, team, color.getRed());
+		Player clone = new Player(automaton, 0, team);
 
 		clone.updateGradient(-initGradient);
 

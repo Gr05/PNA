@@ -18,7 +18,7 @@ public class Game implements Runnable
 	private final Map<Position, LinkedList<Update>> toUpdate = new HashMap<>();
 	private Gui gui = null;
 	private long tickSpeed = 200L;
-	private boolean pause = false, run = true;
+	private boolean pause = true, run = true;
 	private int ticks = 0;
 
 	public Game(Board board, Automaton... automata)
@@ -45,7 +45,7 @@ public class Game implements Runnable
 				}
 			}
 
-			addPlayer(new Player(automaton, 0, 0, 255), board.randomPos());
+			addPlayer(new Player(automaton, 0, 0), board.randomPos());
 		}
 	}
 
